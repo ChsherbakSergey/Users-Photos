@@ -21,6 +21,7 @@ class PhotoCell: UICollectionViewCell {
     let photoView = PhotoImageView(cornerRadius: 10)
     let titleLabel = Label(text: "Caption", fontSize: 16, numberOfLines: 0)
     let indicatorView = UIActivityIndicatorView(style: .large)
+    let imageCashe = NSCache<NSString, UIImage>()
     
     //MARK: - Init
     override init(frame: CGRect) {
@@ -76,9 +77,6 @@ class PhotoCell: UICollectionViewCell {
     }
     
     private func downloadImage(withUrl imageUrl: String) {
-        indicatorView.startAnimating()
-        
-        let imageCashe = NSCache<NSString, UIImage>()
         
         guard let url = URL(string: imageUrl) else { return }
         
@@ -90,12 +88,14 @@ class PhotoCell: UICollectionViewCell {
             
         } else {
             
+            indicatorView.startAnimating()
+            
             let session = URLSession(configuration: .default)
             
             let task = session.dataTask(with: url) { (data, response, error) in
                 guard error == nil, data != nil, let safeData = data else { return }
                 guard let image = UIImage(data: safeData) else { return }
-                imageCashe.setObject(image, forKey: url.absoluteString as NSString)
+                self.imageCashe.setObject(image, forKey: url.absoluteString as NSString)
                 
                 DispatchQueue.main.async {
                     self.indicatorView.stopAnimating()

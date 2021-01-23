@@ -22,6 +22,7 @@ class Label: UILabel {
     init(text: String?, fontSize: CGFloat, numberOfLines: Int) {
         super.init(frame: .zero)
         self.text = text
+        self.textColor = .black
         self.font = .systemFont(ofSize: fontSize)
         self.numberOfLines = numberOfLines
         self.textAlignment = .left
